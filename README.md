@@ -1,26 +1,26 @@
-# Zoca website starter
+# ZOCA website — GitHub Pages starter
 
-## Files
-- `index.html` — homepage
-- `services.html` — services page
-- `hospitality.html`, `destinations.html`, `brands.html`, `business.html` — portfolio pages
-- `styles.css` — shared design and responsive layout
-- `script.js` — mobile navigation, interactive Attention/Desire/Action panels, showreel control
-- `assets/showreel.mp4` — add your showreel video here (create the `assets` folder if needed; it is included in this package)
+Responsive multi-page static website built with plain HTML, CSS and JavaScript.
 
-## Publish with GitHub Pages
-1. Create a GitHub repository.
-2. Upload all files and folders, keeping the same structure.
+## Pages
+- `index.html` — homepage, three-stage Attention / Desire / Action section, services teaser, portfolio links, trusted-by placeholders, showreel placeholder and FAQ.
+- `about.html` — Lucas & Zoé introduction, client logo placeholders and testimonials.
+- `services.html` — service overview, four service cards and scroll-progress process timeline.
+- `portfolio.html` — portfolio landing page with four category links.
+- `hospitality.html`, `destinations.html`, `brands.html`, `business.html` — individual image galleries.
+- `get-a-quote.html` — name, phone, company, email and project details form plus FAQ.
+
+## Publish
+1. Create a new GitHub repository (for example `zoca-website`).
+2. Upload the contents of this folder to the repository root.
 3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select branch `main` and folder `/ (root)`, then Save.
-6. GitHub Pages will provide your website URL. You can connect your custom domain in the same Pages settings.
+4. Choose **Deploy from a branch**, select `main` and `/ (root)`, then save.
 
-## Customize before launch
-- Replace `hello@zoca.com` with your actual contact email.
-- Replace the illustrative Unsplash photos with your own images.
-- Replace the placeholder text in the Trusted By section with actual client logos/names.
-- Add your video as `assets/showreel.mp4`.
-- Update portfolio gallery images and copy with your real projects.
+## Before launch
+- Images are remote Unsplash placeholders. Replace them with your own licensed assets.
+- Replace client logo and testimonial placeholders with approved material.
+- Replace the showreel placeholder with your real video.
+- In `script.js`, replace `hello@zoca.studio` with the correct enquiry email. The current form opens the visitor's email application; it does not store submissions. For a server-side form, connect Formspree, Basin or another form endpoint.
+- Add social links and any required legal/privacy pages.
 
-This is a static HTML/CSS/JavaScript website. No build step or framework is required.
+The palette uses warm cream, olive and clay tones. The layout is responsive. The AIDA section presents three stacked horizontal stages, and the services process includes a scroll-driven progress line on desktop.
