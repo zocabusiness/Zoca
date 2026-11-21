@@ -172,3 +172,23 @@ img,.image-band,.services-hero-img,.service-card .photo,.shortcut,.showreel-fram
  .aida-label{font-size:clamp(1.55rem,6vw,2.1rem)}
 }
 @media(prefers-reduced-motion:reduce){.aida-item,.aida-label .aida-idle,.aida-label .aida-hover,.aida-copy p{transition:none}}
+
+
+/* AIDA refinement: typographic panels with stable headline alignment */
+.aida{background:var(--paper);padding-top:clamp(68px,8vw,108px);padding-bottom:clamp(68px,8vw,108px)}
+.aida-layout{display:block}
+.aida-heading{font:400 clamp(2.2rem,4.3vw,4rem)/1.05 var(--display);letter-spacing:-.045em;text-align:center;margin:0 0 clamp(34px,4vw,56px)}
+.aida-interaction{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:clamp(28px,4vw,64px);align-items:stretch}
+.aida-panels,.aida-copy{display:grid;grid-template-rows:repeat(3,clamp(70px,7.1vw,96px));gap:14px;min-width:0}
+.aida-item{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:0 28px;border:0;border-radius:15px;overflow:hidden;cursor:pointer;outline-offset:5px;background:rgba(37,40,32,.82);transition:background .25s ease,transform .25s ease}
+.aida-item:hover,.aida-item:focus-visible,.aida-item.is-active{background:rgba(37,40,32,.94)}
+.aida-label{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;color:#f6f4ed;font:400 clamp(1.55rem,2.6vw,2.45rem)/1 var(--display);letter-spacing:-.035em;white-space:nowrap}
+.aida-word{position:relative;z-index:1;display:inline-block;transition:transform .24s ease}
+.aida-prefix{position:absolute;right:100%;margin-right:.28em;opacity:0;transform:translateX(12px);transition:opacity .24s ease,transform .24s ease;font-size:.72em;letter-spacing:-.025em}
+.aida-item:hover .aida-prefix,.aida-item:focus-visible .aida-prefix,.aida-item.is-active .aida-prefix{opacity:1;transform:translateX(0)}
+.aida-copy{align-items:stretch}
+.aida-copy p{display:flex;align-items:center;margin:0;max-width:680px;color:#383a34;font:italic 400 clamp(1rem,1.35vw,1.22rem)/1.65 var(--serif);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s ease}
+.aida-copy p.is-visible{opacity:1;visibility:visible;transform:translateY(0)}
+.aida-tagline{margin:clamp(34px,5vw,62px) 0 0;text-align:center;font:italic clamp(1.2rem,2vw,1.7rem)/1.35 var(--display);color:#30312d}
+@media(max-width:800px){.aida-interaction{grid-template-columns:1fr;gap:18px}.aida-panels{grid-template-rows:repeat(3,76px);gap:12px}.aida-copy{display:block;min-height:0}.aida-copy p{display:none;font-size:1rem;line-height:1.6}.aida-copy p.is-visible{display:block}.aida-label{font-size:clamp(1.5rem,6vw,2rem)}}
+@media(prefers-reduced-motion:reduce){.aida-item,.aida-prefix,.aida-word,.aida-copy p{transition:none}}
