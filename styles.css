@@ -123,3 +123,21 @@ img,.image-band,.services-hero-img,.service-card .photo,.shortcut,.showreel-fram
   .aida-label{min-height:100px;font-size:clamp(1.65rem,5vw,2.2rem)}
   .aida-item p{font-size:1rem}
 }
+
+
+/* AIDA interaction: concise labels at rest, expanded copy on hover/focus */
+.aida-item{cursor:pointer;outline:none}
+.aida-label .aida-idle,.aida-label .aida-hover{display:block;transition:opacity .22s ease,transform .22s ease}
+.aida-label .aida-hover{position:absolute;opacity:0;transform:translateY(7px)}
+.aida-item p{opacity:0;visibility:hidden;max-height:0;overflow:hidden;transform:translateY(8px);transition:opacity .24s ease,transform .24s ease,max-height .3s ease,visibility .24s ease}
+.aida-item:hover .aida-idle,.aida-item:focus .aida-idle{opacity:0;transform:translateY(-7px)}
+.aida-item:hover .aida-hover,.aida-item:focus .aida-hover{opacity:1;transform:translateY(0)}
+.aida-item:hover p,.aida-item:focus p{opacity:1;visibility:visible;max-height:220px;transform:translateY(0)}
+.aida-item:hover .aida-label:after,.aida-item:focus .aida-label:after{background:var(--olive)}
+.aida-tagline{margin:clamp(28px,4vw,52px) 0 0;text-align:center;font:italic clamp(1.15rem,2vw,1.65rem)/1.35 var(--display);color:#30312d}
+@media(max-width:800px){
+  .aida-item{gap:0}
+  .aida-item p{font-size:1rem}
+  .aida-item:hover p,.aida-item:focus p{max-height:320px}
+}
+@media(prefers-reduced-motion:reduce){.aida-item p,.aida-label .aida-idle,.aida-label .aida-hover{transition:none}}
