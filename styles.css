@@ -141,3 +141,34 @@ img,.image-band,.services-hero-img,.service-card .photo,.shortcut,.showreel-fram
   .aida-item:hover p,.aida-item:focus p{max-height:320px}
 }
 @media(prefers-reduced-motion:reduce){.aida-item p,.aida-label .aida-idle,.aida-label .aida-hover{transition:none}}
+
+
+/* AIDA interaction: idle overview, one expanded row on hover/focus */
+.aida{background:#fff;padding-top:clamp(70px,9vw,120px);padding-bottom:clamp(70px,9vw,120px)}
+.aida-layout{display:block}
+.aida-interaction{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:clamp(34px,4.5vw,76px);align-items:stretch}
+.aida-panels,.aida-copy{display:grid;grid-template-rows:repeat(3,clamp(105px,10vw,140px));gap:20px;min-width:0}
+.aida-item{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:0;border:0;border-radius:22px;overflow:hidden;cursor:pointer;outline-offset:5px;transition:filter .25s ease,transform .25s ease}
+.aida-item:nth-child(1){background:linear-gradient(#0002,#0002),url('assets/aida-1.png') center/cover no-repeat}
+.aida-item:nth-child(2){background:linear-gradient(#0002,#0002),url('assets/aida-2.png') center/cover no-repeat}
+.aida-item:nth-child(3){background:linear-gradient(#0002,#0002),url('assets/aida-3.png') center/cover no-repeat}
+.aida-item:hover,.aida-item:focus-visible,.aida-item.is-active{filter:brightness(1.06)}
+.aida-label{position:relative;display:block;min-height:0;padding:0 20px;border:0;border-radius:0;background:none;color:#fff;font:400 clamp(1.65rem,2.8vw,2.8rem)/1.1 var(--display);letter-spacing:-.035em;white-space:nowrap;text-align:center}
+.aida-label:after{display:none}
+.aida-label .aida-idle,.aida-label .aida-hover{display:block;transition:opacity .2s ease,transform .2s ease}
+.aida-label .aida-hover{position:absolute;inset:0;opacity:0;transform:translateY(8px)}
+.aida-item:hover .aida-idle,.aida-item:focus-visible .aida-idle,.aida-item.is-active .aida-idle{opacity:0;transform:translateY(-8px)}
+.aida-item:hover .aida-hover,.aida-item:focus-visible .aida-hover,.aida-item.is-active .aida-hover{opacity:1;transform:translateY(0)}
+.aida-copy{align-items:stretch}
+.aida-copy p{display:flex;align-items:center;margin:0;max-width:680px;color:#242521;font-size:clamp(1rem,1.35vw,1.22rem);line-height:1.65;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s ease;}
+.aida-copy p.is-visible{opacity:1;visibility:visible;transform:translateY(0)}
+.aida-tagline{margin:clamp(34px,5vw,62px) 0 0;text-align:center;font:italic clamp(1.2rem,2vw,1.7rem)/1.35 var(--display);color:#30312d}
+@media(max-width:800px){
+ .aida-interaction{grid-template-columns:1fr;gap:22px}
+ .aida-panels{grid-template-rows:repeat(3,112px);gap:14px}
+ .aida-copy{display:block;min-height:0}
+ .aida-copy p{display:none;font-size:1rem;line-height:1.6}
+ .aida-copy p.is-visible{display:block}
+ .aida-label{font-size:clamp(1.55rem,6vw,2.1rem)}
+}
+@media(prefers-reduced-motion:reduce){.aida-item,.aida-label .aida-idle,.aida-label .aida-hover,.aida-copy p{transition:none}}
