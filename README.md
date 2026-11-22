@@ -20,7 +20,7 @@ Responsive multi-page static website built with plain HTML, CSS and JavaScript.
 - Images are remote Unsplash placeholders. Replace them with your own licensed assets.
 - Replace client logo and testimonial placeholders with approved material.
 - Replace the showreel placeholder with your real video.
-- In `script.js`, replace `hello@zoca.studio` with the correct enquiry email. The current form opens the visitor's email application; it does not store submissions. For a server-side form, connect Formspree, Basin or another form endpoint.
+- In `script.js`, replace `Zocabusiness@gmail.com` with the correct enquiry email. The current form opens the visitor's email application; it does not store submissions. For a server-side form, connect Formspree, Basin or another form endpoint.
 - Add social links and any required legal/privacy pages.
 
 The palette uses warm cream, olive and clay tones. The layout is responsive. The AIDA section presents three stacked horizontal stages, and the services process includes a scroll-driven progress line on desktop.
