@@ -207,3 +207,49 @@ img,.image-band,.services-hero-img,.service-card .photo,.shortcut,.showreel-fram
 .logo-marquee .client-logo{white-space:nowrap}
 @media(max-width:800px){.hero{padding-bottom:48px}.hero .image-band{height:clamp(380px,78vw,560px)}.hero .display{font-size:clamp(2.35rem,8vw,4.2rem);width:calc(100% - 36px)}.hero .hero-bottom{margin-top:28px}}
 @media(max-width:520px){.hero .image-band{height:440px}.hero .display{font-size:clamp(2.1rem,9vw,3.1rem)}.logo-marquee{padding:24px 0}}
+
+
+/* Quote page: two-step enquiry form */
+.quote-section{padding-top:clamp(55px,7vw,90px)}
+.quote-layout{grid-template-columns:.72fr 1.28fr;gap:clamp(42px,8vw,120px);align-items:start}
+.quote-intro{position:sticky;top:120px;max-width:420px}
+.quote-intro .section-title{margin:0 0 12px}
+.quote-subtitle{font:400 clamp(1.35rem,2vw,2rem)/1.2 var(--display);margin:0 0 22px}
+.quote-intro p{max-width:390px;line-height:1.8}
+.quote-wizard{display:block}
+.quote-step-heading{display:flex;align-items:baseline;gap:16px;padding:0 0 18px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.quote-step-heading span{font-size:.72rem;letter-spacing:.14em;color:var(--olive);font-weight:700}
+.quote-step-heading h2{font:400 clamp(1.55rem,2.6vw,2.25rem)/1.1 var(--display);margin:0}
+.quote-fields{display:grid;grid-template-columns:1fr 1fr;gap:24px 26px;margin-bottom:54px}
+.quote-wizard .field{min-width:0}
+.quote-wizard .field label{font-size:.82rem;font-weight:600}
+.quote-wizard .field input,.quote-wizard .field textarea,.quote-wizard .field select{width:100%;font:400 .95rem var(--sans);color:var(--ink);background:transparent;border:0;border-bottom:1px solid #aaa99d;border-radius:0;padding:13px 0;outline:none}
+.quote-wizard .field input:focus,.quote-wizard .field textarea:focus,.quote-wizard .field select:focus{border-color:var(--olive);box-shadow:0 1px 0 var(--olive)}
+.quote-wizard .field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#666 50%),linear-gradient(135deg,#666 50%,transparent 50%);background-position:calc(100% - 7px) 50%,calc(100% - 2px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:25px}
+.quote-wizard .field textarea{min-height:140px;resize:vertical;border:1px solid var(--line);padding:14px;border-radius:10px}
+.project-heading{margin-top:4px}
+.quote-prompt{font-size:.9rem;font-weight:600;margin:0 0 16px}
+.category-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:30px}
+.category-choice{min-height:54px;padding:12px 10px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font:500 .82rem var(--sans);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.category-choice:hover,.category-choice[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.project-fields{border-top:1px solid var(--line);padding-top:28px;display:grid;gap:25px}
+.project-fields[hidden],.quote-submit[hidden],.quote-status[hidden]{display:none}
+.project-fields h3{font:400 1.5rem var(--display);margin:0}
+.service-picker{border-bottom:1px solid #aaa99d;position:relative}
+.service-picker summary{list-style:none;cursor:pointer;padding:13px 0;display:flex;justify-content:space-between;align-items:center;font-size:.95rem}
+.service-picker summary::-webkit-details-marker{display:none}
+.service-picker[open] summary span{transform:rotate(180deg)}
+.service-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px 0 18px}
+.service-options label{display:flex;align-items:center;gap:10px;font-size:.9rem;font-weight:400!important;cursor:pointer}
+.service-options input{accent-color:var(--ink);width:16px;height:16px}
+.field-hint{font-size:.75rem;color:var(--muted)}
+.quote-submit{padding-top:28px}
+.quote-submit .btn{cursor:pointer}
+.quote-submit .form-note{font-size:.78rem;color:var(--muted);margin:14px 0 0}
+.quote-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;opacity:0!important}
+.quote-status{padding:34px;border:1px solid var(--line);border-radius:16px;background:var(--paper2)}
+.quote-status h2{font:400 clamp(2rem,4vw,3rem)/1.1 var(--display);margin:0 0 14px}
+.quote-status p{margin:0;color:var(--muted)}
+.quote-status.error{border-color:#b66b57}
+@media(max-width:800px){.quote-layout{grid-template-columns:1fr;gap:35px}.quote-intro{position:static}.quote-fields{margin-bottom:42px}}
+@media(max-width:520px){.quote-fields{grid-template-columns:1fr;gap:20px}.category-buttons{grid-template-columns:repeat(2,1fr)}.service-options{grid-template-columns:1fr 1fr}}
