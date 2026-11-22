@@ -253,3 +253,19 @@ img,.image-band,.services-hero-img,.service-card .photo,.shortcut,.showreel-fram
 .quote-status.error{border-color:#b66b57}
 @media(max-width:800px){.quote-layout{grid-template-columns:1fr;gap:35px}.quote-intro{position:static}.quote-fields{margin-bottom:42px}}
 @media(max-width:520px){.quote-fields{grid-template-columns:1fr;gap:20px}.category-buttons{grid-template-columns:repeat(2,1fr)}.service-options{grid-template-columns:1fr 1fr}}
+
+
+/* Get a quote: white canvas with two tinted form cards */
+body:has(.quote-section){background:#fff}
+.quote-section{background:#fff}
+.quote-card{background:var(--paper2);border-radius:20px;padding:clamp(22px,3vw,38px);margin-bottom:22px}
+.quote-card .quote-step-heading{border-bottom-color:rgba(37,40,32,.18)}
+.quote-card .quote-fields{margin-bottom:10px}
+.quote-card .project-heading{margin-top:0}
+.quote-card .category-buttons{margin-bottom:26px}
+.quote-card .project-fields{border-top-color:rgba(37,40,32,.18)}
+.quote-card .service-options{display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,1.4vw,22px);flex-wrap:nowrap}
+.quote-card .service-options label{white-space:nowrap;gap:7px;font-size:clamp(.78rem,.9vw,.9rem)}
+.quote-card .service-options input{flex:0 0 16px;margin:0}
+@media(max-width:900px){.quote-card .service-options{flex-wrap:wrap;justify-content:flex-start;gap:12px 22px}}
+@media(max-width:520px){.quote-card{padding:20px 17px;border-radius:15px}.quote-card .service-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.quote-card .service-options label{white-space:normal;font-size:.85rem}}
