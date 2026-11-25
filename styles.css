@@ -314,3 +314,14 @@ body:has(.quote-section){background:#fff}
 .partner-gallery-item .gallery-img{height:auto!important;aspect-ratio:auto!important;margin:0;overflow:visible;background:transparent}
 .partner-gallery-item img{display:block;width:100%;height:auto!important;max-height:390px;object-fit:contain;object-position:center}
 @media(max-width:600px){.partner-gallery-row{grid-template-columns:24px minmax(0,1fr) 24px;gap:7px}.partner-gallery-track{gap:9px}.partner-gallery-item{flex-basis:calc((100% - 9px)/2)}.partner-gallery-item img{max-height:260px}.partner-gallery-arrow{width:24px;font-size:1.7rem}}
+
+
+/* Trusted-by partner logo images */
+.trusted-section .logo-marquee{background:#252820;border-color:rgba(255,255,255,.16);padding:24px 0}
+.trusted-section .logo-group{gap:clamp(34px,5vw,76px);align-items:center}
+.client-logo-tile{width:clamp(130px,15vw,190px);height:76px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:10px 16px}
+.client-logo-image{display:block;max-width:100%;max-height:54px;width:auto;height:auto;object-fit:contain}
+.client-logo-image.light-logo{filter:none}
+@media(max-width:640px){.client-logo-tile{width:125px;height:64px;padding:8px}.client-logo-image{max-height:44px}}
+
+.trusted-section .dark-mark-tile{background:#f3f0e8;border-radius:3px}
