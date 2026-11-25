@@ -300,3 +300,17 @@ body:has(.quote-section){background:#fff}
 .partner-gallery-item .gallery-img{height:clamp(145px,18vw,215px);margin:0;overflow:hidden}
 .partner-gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
 @media(max-width:600px){.partner-gallery-row{grid-template-columns:26px minmax(0,1fr) 26px;gap:6px}.partner-gallery-track{gap:9px;grid-auto-columns:calc((100% - 9px)/2)}.partner-gallery-item .gallery-img{height:clamp(125px,32vw,185px)}.partner-project{padding-bottom:26px;margin-bottom:26px}.partner-gallery-arrow{font-size:1.7rem;width:26px}}
+
+
+/* Portfolio galleries: preserve each photograph's native aspect ratio. */
+.partner-gallery-row{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:14px;max-width:980px;margin:0 auto}
+.partner-gallery-arrow{display:flex;align-items:center;justify-content:center;width:32px;height:42px;padding:0;border:0;border-radius:0;background:transparent;color:var(--ink);font-family:var(--body);font-size:2rem;font-weight:300;line-height:1;cursor:pointer;transition:opacity .2s ease,transform .2s ease}
+.partner-gallery-arrow:hover{background:transparent;color:var(--ink);border:0;opacity:.55}
+.partner-gallery-arrow[data-gallery-dir="-1"]:hover{transform:translateX(-2px)}
+.partner-gallery-arrow[data-gallery-dir="1"]:hover{transform:translateX(2px)}
+.partner-gallery-track{display:flex;align-items:center;gap:16px;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
+.partner-gallery-track::-webkit-scrollbar{display:none}
+.partner-gallery-item{flex:0 0 calc((100% - 16px)/2);min-width:0;scroll-snap-align:start}
+.partner-gallery-item .gallery-img{height:auto!important;aspect-ratio:auto!important;margin:0;overflow:visible;background:transparent}
+.partner-gallery-item img{display:block;width:100%;height:auto!important;max-height:390px;object-fit:contain;object-position:center}
+@media(max-width:600px){.partner-gallery-row{grid-template-columns:24px minmax(0,1fr) 24px;gap:7px}.partner-gallery-track{gap:9px}.partner-gallery-item{flex-basis:calc((100% - 9px)/2)}.partner-gallery-item img{max-height:260px}.partner-gallery-arrow{width:24px;font-size:1.7rem}}
