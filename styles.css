@@ -285,3 +285,18 @@ body:has(.quote-section){background:#fff}
 .partner-gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
 @media(max-width:800px){.partner-gallery-track{grid-auto-columns:calc((100% - 18px)/2);gap:18px}.partner-gallery-item .gallery-img,.partner-gallery-item .gallery-img:nth-child(2n){height:clamp(220px,48vw,320px)}}
 @media(max-width:480px){.partner-project-heading{margin-bottom:15px}.partner-gallery-track{grid-auto-columns:84%;gap:12px}.partner-gallery-item .gallery-img,.partner-gallery-item .gallery-img:nth-child(2n){height:280px}.partner-gallery-arrow{width:38px;height:38px}}
+
+
+/* Refined partner galleries: two compact images visible, arrows on both sides */
+.partner-project{padding:4px 0 34px;margin:0 0 34px;border-bottom:1px solid var(--line)}
+.partner-project-heading{display:flex;align-items:center;justify-content:flex-start;margin:0 0 14px}
+.partner-name{font:500 clamp(1.35rem,2.4vw,1.9rem)/1.15 var(--display);letter-spacing:-.02em;margin:0;color:var(--ink)}
+.partner-gallery-row{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:12px;max-width:850px;margin:0 auto}
+.partner-gallery-arrow{width:30px;height:38px;padding:0;border:0;border-radius:0;background:transparent;color:var(--ink);font:300 2rem/1 var(--body);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s,transform .2s}
+.partner-gallery-arrow:hover{background:transparent;color:var(--ink);border:0;opacity:.55;transform:scale(1.12)}
+.partner-gallery-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 14px)/2);gap:14px;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
+.partner-gallery-track::-webkit-scrollbar{display:none}
+.partner-gallery-item{min-width:0;scroll-snap-align:start}
+.partner-gallery-item .gallery-img{height:clamp(145px,18vw,215px);margin:0;overflow:hidden}
+.partner-gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:600px){.partner-gallery-row{grid-template-columns:26px minmax(0,1fr) 26px;gap:6px}.partner-gallery-track{gap:9px;grid-auto-columns:calc((100% - 9px)/2)}.partner-gallery-item .gallery-img{height:clamp(125px,32vw,185px)}.partner-project{padding-bottom:26px;margin-bottom:26px}.partner-gallery-arrow{font-size:1.7rem;width:26px}}

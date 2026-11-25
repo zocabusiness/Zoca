@@ -23,3 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!root.contains(document.activeElement)) clear();
   });
 });
+
+
+// Partner gallery controls: move by one visible pair while preserving swipe/trackpad scrolling.
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.partner-project').forEach(project => {
+    const track = project.querySelector('.partner-gallery-track');
+    if (!track) return;
+    project.querySelectorAll('.partner-gallery-arrow').forEach(button => {
+      button.addEventListener('click', () => {
+        const direction = Number(button.dataset.galleryDir || 1);
+        const item = track.querySelector('.partner-gallery-item');
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        const step = item ? (item.getBoundingClientRect().width + gap) * 2 : track.clientWidth;
+        track.scrollBy({ left: direction * step, behavior: 'smooth' });
+      });
+    });
+  });
+});
