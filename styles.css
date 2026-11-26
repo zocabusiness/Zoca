@@ -334,3 +334,89 @@ body.home>header .nav-cta{background:transparent;color:#fff;border-color:rgba(25
 body.home>header .nav-cta:hover{background:#fff;color:#252820}
 body.home .hero{padding-top:0}
 body.home .hero .image-band:after{content:none;background:none}
+
+
+/* Latest asset update: natural logo presentation and image proportions */
+.trusted-section .logo-marquee{
+  background:transparent;
+  border-color:transparent;
+}
+.client-logo-tile{
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  padding:4px 10px;
+}
+.client-logo-image{
+  max-width:100%;
+  max-height:58px;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+}
+.trusted-section .dark-mark-tile{background:transparent!important}
+
+/* Keep the What We Do photograph at its native aspect ratio. */
+.home-services .visual{
+  height:auto!important;
+  overflow:visible;
+  align-self:center;
+}
+.home-services .visual img{
+  display:block;
+  width:100%;
+  height:auto!important;
+  max-height:none;
+  object-fit:initial;
+}
+
+/* Portfolio galleries: two images visible, native proportions, horizontal row. */
+.partner-gallery-row{
+  grid-template-columns:30px minmax(0,1fr) 30px;
+  max-width:1100px;
+  gap:12px;
+}
+.partner-gallery-track{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+}
+.partner-gallery-item{
+  flex:0 0 calc((100% - 14px)/2);
+  min-width:0;
+  scroll-snap-align:start;
+}
+.partner-gallery-item .gallery-img{
+  height:clamp(150px,19vw,225px)!important;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:transparent!important;
+}
+.partner-gallery-item img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain!important;
+  object-position:center;
+}
+@media(max-width:600px){
+  .partner-gallery-row{grid-template-columns:24px minmax(0,1fr) 24px;gap:6px}
+  .partner-gallery-track{gap:9px}
+  .partner-gallery-item{flex-basis:calc((100% - 9px)/2)}
+  .partner-gallery-item .gallery-img{height:clamp(125px,32vw,185px)!important}
+}
+
+/* What We Do image stays proportional on smaller screens too. */
+@media(max-width:800px){
+  .home-services .visual{height:auto!important}
+}
+
+.client-logo-image{border-radius:0!important;overflow:visible!important}

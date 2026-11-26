@@ -25,18 +25,63 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Partner gallery controls: move by one visible pair while preserving swipe/trackpad scrolling.
+
+// Partner galleries: circular navigation with cloned edge images.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.partner-project').forEach(project => {
     const track = project.querySelector('.partner-gallery-track');
     if (!track) return;
+    const originals = [...track.querySelectorAll('.partner-gallery-item')];
+    if (originals.length < 2) return;
+
+    const firstClone = originals[0].cloneNode(true);
+    const lastClone = originals[originals.length - 1].cloneNode(true);
+    firstClone.dataset.galleryClone = 'first';
+    lastClone.dataset.galleryClone = 'last';
+    firstClone.setAttribute('aria-hidden', 'true');
+    lastClone.setAttribute('aria-hidden', 'true');
+    track.insertBefore(lastClone, originals[0]);
+    track.appendChild(firstClone);
+
+    const leftOf = item => item.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+    const scrollToItem = (item, behavior='smooth') => {
+      track.scrollTo({left:leftOf(item), behavior});
+    };
+    const resetFromClone = () => {
+      if (track.scrollLeft < leftOf(originals[0]) - 2) {
+        scrollToItem(originals[originals.length - 1], 'auto');
+      } else if (track.scrollLeft > leftOf(originals[originals.length - 1]) + 2) {
+        scrollToItem(originals[0], 'auto');
+      }
+    };
+
+    // Start at the first real photograph, not the prepended clone.
+    requestAnimationFrame(() => scrollToItem(originals[0], 'auto'));
+
+    let scrollTimer;
+    track.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(resetFromClone, 140);
+    }, {passive:true});
+
     project.querySelectorAll('.partner-gallery-arrow').forEach(button => {
       button.addEventListener('click', () => {
         const direction = Number(button.dataset.galleryDir || 1);
-        const item = track.querySelector('.partner-gallery-item');
-        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-        const step = item ? (item.getBoundingClientRect().width + gap) * 2 : track.clientWidth;
-        track.scrollBy({ left: direction * step, behavior: 'smooth' });
+        const trackLeft = track.getBoundingClientRect().left;
+        let currentIndex = 0;
+        let smallest = Infinity;
+        originals.forEach((item, index) => {
+          const distance = Math.abs(item.getBoundingClientRect().left - trackLeft);
+          if (distance < smallest) { smallest = distance; currentIndex = index; }
+        });
+
+        if (direction > 0 && currentIndex === originals.length - 1) {
+          scrollToItem(firstClone);
+        } else if (direction < 0 && currentIndex === 0) {
+          scrollToItem(lastClone);
+        } else {
+          scrollToItem(originals[currentIndex + direction]);
+        }
       });
     });
   });
