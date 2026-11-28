@@ -26,79 +26,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// Partner galleries: genuinely circular scrolling in either direction.
-// Keep two duplicate cycles on each side, and only recenter after the visitor
-// has moved a full cycle beyond the central copy. The recenter is between
-// identical image sequences, so the visible gallery never jumps to the start.
+// Partner galleries: continuous circular native scrolling.
+// Repeated tracks on both sides let the user scroll in either direction without
+// reaching an edge. Re-centering shifts by an exact number of identical cycles,
+// so the visible content does not change when the scroll offset is normalised.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.partner-project').forEach(project => {
     const track = project.querySelector('.partner-gallery-track');
     if (!track) return;
-    const originals = [...track.querySelectorAll('.partner-gallery-item')];
+    const originals = [...track.querySelectorAll('.partner-gallery-item:not([data-gallery-clone])')];
     if (originals.length < 2) return;
 
-    const cloneCycle = () => originals.map(item => {
-      const clone = item.cloneNode(true);
-      clone.dataset.galleryClone = 'true';
-      clone.setAttribute('aria-hidden', 'true');
-      clone.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(el => el.setAttribute('tabindex', '-1'));
-      clone.querySelectorAll('img').forEach(img => { img.loading = 'eager'; });
-      return clone;
-    });
+    const cloneSequence = () => {
+      const fragment = document.createDocumentFragment();
+      originals.forEach(item => {
+        const clone = item.cloneNode(true);
+        clone.dataset.galleryClone = 'true';
+        clone.setAttribute('aria-hidden', 'true');
+        clone.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(el => el.setAttribute('tabindex', '-1'));
+        clone.querySelectorAll('img').forEach(img => { img.loading = 'eager'; });
+        fragment.appendChild(clone);
+      });
+      return fragment;
+    };
 
-    // Two full cycles before and after the real items provide ample runway.
+    // Three complete copies on either side provide generous runway for touch momentum.
     const before = document.createDocumentFragment();
-    [...cloneCycle(), ...cloneCycle()].forEach(item => before.appendChild(item));
+    for (let i = 0; i < 3; i++) before.appendChild(cloneSequence());
     track.insertBefore(before, originals[0]);
     const after = document.createDocumentFragment();
-    [...cloneCycle(), ...cloneCycle()].forEach(item => after.appendChild(item));
+    for (let i = 0; i < 3; i++) after.appendChild(cloneSequence());
     track.appendChild(after);
 
     let cycleWidth = 0;
-    let centralStart = 0;
-    let adjusting = false;
+    let baseStart = 0;
+    let normalizing = false;
     const measure = () => {
       const first = originals[0];
-      const firstAfter = originals[0].nextElementSibling;
-      // The next item is the second original; use the first clone after the
-      // original run to measure one complete cycle including all gaps.
-      const cloneAfter = track.querySelectorAll('[data-gallery-clone="true"]')[originals.length * 2];
-      if (!first || !cloneAfter) return;
-      centralStart = first.offsetLeft;
-      cycleWidth = cloneAfter.offsetLeft - first.offsetLeft;
-      if (!cycleWidth && firstAfter) {
-        const last = originals[originals.length - 1];
-        cycleWidth = last.offsetLeft + last.offsetWidth - first.offsetLeft + (parseFloat(getComputedStyle(track).gap) || 0);
+      const firstAfter = track.querySelectorAll('[data-gallery-clone="true"]')[originals.length * 3];
+      if (!first || !firstAfter) return;
+      const trackLeft = track.getBoundingClientRect().left;
+      baseStart = first.getBoundingClientRect().left - trackLeft + track.scrollLeft;
+      const afterStart = firstAfter.getBoundingClientRect().left - trackLeft + track.scrollLeft;
+      cycleWidth = afterStart - baseStart;
+    };
+
+    const normalize = () => {
+      if (normalizing || !cycleWidth) return;
+      const position = track.scrollLeft;
+      const lower = baseStart - cycleWidth;
+      const upper = baseStart + cycleWidth;
+      if (position < lower || position >= upper) {
+        const cycles = Math.floor((position - baseStart) / cycleWidth);
+        if (cycles !== 0) {
+          normalizing = true;
+          track.scrollLeft = position - cycles * cycleWidth;
+          normalizing = false;
+        }
       }
     };
 
-    const recenter = () => {
-      if (adjusting || !cycleWidth) return;
-      const leftBoundary = centralStart - cycleWidth;
-      const rightBoundary = centralStart + cycleWidth;
-      if (track.scrollLeft < leftBoundary) {
-        adjusting = true;
-        track.scrollLeft += cycleWidth;
-        adjusting = false;
-      } else if (track.scrollLeft >= rightBoundary) {
-        adjusting = true;
-        track.scrollLeft -= cycleWidth;
-        adjusting = false;
-      }
-    };
-
-    const initialize = () => {
+    const initialise = () => {
       measure();
-      if (cycleWidth) track.scrollLeft = centralStart;
+      // Start on the first real image, with identical copies available to either side.
+      track.scrollLeft = baseStart;
     };
-    const ready = Promise.all(originals.flatMap(item => [...item.querySelectorAll('img')].map(img => img.decode?.().catch(() => {}) || Promise.resolve())));
-    ready.then(() => requestAnimationFrame(() => requestAnimationFrame(initialize)));
-    window.addEventListener('load', initialize, { once: true });
-    track.addEventListener('scroll', recenter, { passive: true });
+    requestAnimationFrame(() => requestAnimationFrame(initialise));
+    track.addEventListener('scroll', normalize, { passive: true });
+
+    let resizeFrame = 0;
     window.addEventListener('resize', () => {
-      const relative = cycleWidth ? track.scrollLeft - centralStart : 0;
-      measure();
-      if (cycleWidth) track.scrollLeft = centralStart + Math.max(-cycleWidth * .9, Math.min(cycleWidth * .9, relative));
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        const first = originals[0];
+        const oldStart = baseStart;
+        const oldWidth = cycleWidth;
+        const relative = oldWidth ? (track.scrollLeft - oldStart) / oldWidth : 0;
+        measure();
+        track.scrollLeft = baseStart + relative * cycleWidth;
+      });
     }, { passive: true });
 
     project.querySelectorAll('.partner-gallery-arrow').forEach(button => {
