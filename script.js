@@ -26,10 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// Partner galleries: continuous circular native scrolling.
-// Repeated tracks on both sides let the user scroll in either direction without
-// reaching an edge. Re-centering shifts by an exact number of identical cycles,
-// so the visible content does not change when the scroll offset is normalised.
+// Partner galleries: circular native scrolling. Rebase only after a gesture or
+// smooth arrow movement has fully ended. Rebasing during the scroll animation
+// was the source of the visible snap-back in the earlier implementation.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.partner-project').forEach(project => {
     const track = project.querySelector('.partner-gallery-track');
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const originals = [...track.querySelectorAll('.partner-gallery-item:not([data-gallery-clone])')];
     if (originals.length < 2) return;
 
-    const cloneSequence = () => {
+    const makeCopy = () => {
       const fragment = document.createDocumentFragment();
       originals.forEach(item => {
         const clone = item.cloneNode(true);
@@ -50,69 +49,78 @@ document.addEventListener('DOMContentLoaded', () => {
       return fragment;
     };
 
-    // Three complete copies on either side provide generous runway for touch momentum.
+    // Long runway on both sides so a long drag never reaches a physical edge.
+    const copiesEachSide = 8;
     const before = document.createDocumentFragment();
-    for (let i = 0; i < 3; i++) before.appendChild(cloneSequence());
+    for (let i = 0; i < copiesEachSide; i++) before.appendChild(makeCopy());
     track.insertBefore(before, originals[0]);
     const after = document.createDocumentFragment();
-    for (let i = 0; i < 3; i++) after.appendChild(cloneSequence());
+    for (let i = 0; i < copiesEachSide; i++) after.appendChild(makeCopy());
     track.appendChild(after);
 
     let cycleWidth = 0;
-    let baseStart = 0;
-    let normalizing = false;
+    let originalStart = 0;
     const measure = () => {
       const first = originals[0];
-      const firstAfter = track.querySelectorAll('[data-gallery-clone="true"]')[originals.length * 3];
-      if (!first || !firstAfter) return;
+      const afterCopies = track.querySelectorAll('[data-gallery-clone="true"]');
+      const firstAfterOriginals = afterCopies[originals.length * copiesEachSide];
+      if (!first || !firstAfterOriginals) return false;
       const trackLeft = track.getBoundingClientRect().left;
-      baseStart = first.getBoundingClientRect().left - trackLeft + track.scrollLeft;
-      const afterStart = firstAfter.getBoundingClientRect().left - trackLeft + track.scrollLeft;
-      cycleWidth = afterStart - baseStart;
+      originalStart = first.getBoundingClientRect().left - trackLeft + track.scrollLeft;
+      const afterStart = firstAfterOriginals.getBoundingClientRect().left - trackLeft + track.scrollLeft;
+      cycleWidth = afterStart - originalStart;
+      return cycleWidth > 0;
     };
 
-    const normalize = () => {
-      if (normalizing || !cycleWidth) return;
+    const rebase = () => {
+      if (!cycleWidth) return;
       const position = track.scrollLeft;
-      const lower = baseStart - cycleWidth;
-      const upper = baseStart + cycleWidth;
-      if (position < lower || position >= upper) {
-        const cycles = Math.floor((position - baseStart) / cycleWidth);
-        if (cycles !== 0) {
-          normalizing = true;
-          track.scrollLeft = position - cycles * cycleWidth;
-          normalizing = false;
-        }
+      const delta = position - originalStart;
+      const cycles = Math.trunc(delta / cycleWidth);
+      if (cycles) {
+        // The content at this offset is pixel-identical one cycle away.
+        // Use an instant offset adjustment after scrolling has stopped.
+        track.scrollLeft = position - cycles * cycleWidth;
       }
     };
 
+    let fallbackTimer = 0;
+    track.addEventListener('scroll', () => {
+      // Chrome/modern browsers provide scrollend. This debounce is a fallback.
+      if (!('onscrollend' in track)) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = setTimeout(rebase, 260);
+      }
+    }, { passive: true });
+    track.addEventListener('scrollend', () => {
+      clearTimeout(fallbackTimer);
+      rebase();
+    }, { passive: true });
+
     const initialise = () => {
-      measure();
-      // Start on the first real image, with identical copies available to either side.
-      track.scrollLeft = baseStart;
+      if (!measure()) return;
+      track.scrollLeft = originalStart;
     };
     requestAnimationFrame(() => requestAnimationFrame(initialise));
-    track.addEventListener('scroll', normalize, { passive: true });
 
     let resizeFrame = 0;
     window.addEventListener('resize', () => {
       cancelAnimationFrame(resizeFrame);
       resizeFrame = requestAnimationFrame(() => {
-        const first = originals[0];
-        const oldStart = baseStart;
+        const oldStart = originalStart;
         const oldWidth = cycleWidth;
-        const relative = oldWidth ? (track.scrollLeft - oldStart) / oldWidth : 0;
-        measure();
-        track.scrollLeft = baseStart + relative * cycleWidth;
+        const progress = oldWidth ? (track.scrollLeft - oldStart) / oldWidth : 0;
+        if (measure()) track.scrollLeft = originalStart + progress * cycleWidth;
       });
     }, { passive: true });
 
     project.querySelectorAll('.partner-gallery-arrow').forEach(button => {
       button.addEventListener('click', () => {
         const direction = Number(button.dataset.galleryDir || 1);
-        const item = originals[0];
+        const firstVisible = track.querySelector('.partner-gallery-item');
         const gap = parseFloat(getComputedStyle(track).gap) || 0;
-        track.scrollBy({ left: direction * (item.getBoundingClientRect().width + gap), behavior: 'smooth' });
+        const step = firstVisible ? firstVisible.getBoundingClientRect().width + gap : track.clientWidth * .8;
+        track.scrollBy({ left: direction * step, behavior: 'smooth' });
       });
     });
   });

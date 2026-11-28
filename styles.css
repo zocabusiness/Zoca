@@ -531,3 +531,8 @@ body.home .hero .image-band:after{content:none;background:none}
   -webkit-overflow-scrolling:touch;
 }
 .partner-gallery-item{scroll-snap-align:none!important;}
+
+
+/* Circular gallery: no snap points; user-controlled native scrolling. */
+.partner-gallery-track{scroll-snap-type:none!important;scroll-behavior:auto!important;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+.partner-gallery-item{scroll-snap-align:none!important;}
