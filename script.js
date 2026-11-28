@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// Partner galleries: circular navigation with cloned edge images.
+// Partner galleries: seamless infinite loop in both directions, including touch/trackpad scrolling.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.partner-project').forEach(project => {
     const track = project.querySelector('.partner-gallery-track');
@@ -34,54 +34,74 @@ document.addEventListener('DOMContentLoaded', () => {
     const originals = [...track.querySelectorAll('.partner-gallery-item')];
     if (originals.length < 2) return;
 
-    const firstClone = originals[0].cloneNode(true);
-    const lastClone = originals[originals.length - 1].cloneNode(true);
-    firstClone.dataset.galleryClone = 'first';
-    lastClone.dataset.galleryClone = 'last';
-    firstClone.setAttribute('aria-hidden', 'true');
-    lastClone.setAttribute('aria-hidden', 'true');
-    track.insertBefore(lastClone, originals[0]);
-    track.appendChild(firstClone);
-
-    const leftOf = item => item.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
-    const scrollToItem = (item, behavior='smooth') => {
-      track.scrollTo({left:leftOf(item), behavior});
+    // Add a complete copy on either side so the user can enter the loop
+    // from the first image and continue in either direction immediately.
+    const makeClone = item => {
+      const clone = item.cloneNode(true);
+      clone.dataset.galleryClone = 'true';
+      clone.setAttribute('aria-hidden', 'true');
+      clone.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(el => el.setAttribute('tabindex', '-1'));
+      clone.querySelectorAll('img').forEach(img => img.loading = 'eager');
+      return clone;
     };
-    const resetFromClone = () => {
-      if (track.scrollLeft < leftOf(originals[0]) - 2) {
-        scrollToItem(originals[originals.length - 1], 'auto');
-      } else if (track.scrollLeft > leftOf(originals[originals.length - 1]) + 2) {
-        scrollToItem(originals[0], 'auto');
+    const before = document.createDocumentFragment();
+    originals.forEach(item => before.appendChild(makeClone(item)));
+    track.insertBefore(before, originals[0]);
+    const after = document.createDocumentFragment();
+    originals.forEach(item => after.appendChild(makeClone(item)));
+    track.appendChild(after);
+
+    let cycleWidth = 0;
+    let normalizing = false;
+    const measure = () => {
+      const firstOriginal = originals[0];
+      const firstAfter = track.querySelector('[data-gallery-clone="true"]:last-of-type');
+      // Use the original sequence's total width, including its inter-item gaps.
+      const firstBefore = track.querySelector('[data-gallery-clone="true"]');
+      const firstAfterClone = [...track.querySelectorAll('[data-gallery-clone="true"]')][originals.length];
+      if (firstOriginal && firstAfterClone) cycleWidth = firstAfterClone.offsetLeft - firstOriginal.offsetLeft;
+      if (!cycleWidth && originals.length) {
+        const last = originals[originals.length - 1];
+        cycleWidth = last.offsetLeft + last.offsetWidth - firstOriginal.offsetLeft;
+        const style = getComputedStyle(track);
+        cycleWidth += parseFloat(style.columnGap || style.gap || 0) || 0;
+      }
+      if (firstBefore && firstAfter) { /* keep clone references measurable */ }
+    };
+    const firstOriginal = originals[0];
+    const normalize = () => {
+      if (normalizing || !cycleWidth) return;
+      const originalStart = firstOriginal.offsetLeft;
+      const originalEnd = originalStart + cycleWidth;
+      if (track.scrollLeft < originalStart - 1) {
+        normalizing = true;
+        track.scrollLeft += cycleWidth;
+        normalizing = false;
+      } else if (track.scrollLeft >= originalEnd - 1) {
+        normalizing = true;
+        track.scrollLeft -= cycleWidth;
+        normalizing = false;
       }
     };
-
-    // Start at the first real photograph, not the prepended clone.
-    requestAnimationFrame(() => scrollToItem(originals[0], 'auto'));
-
-    let scrollTimer;
-    track.addEventListener('scroll', () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(resetFromClone, 140);
+    const startAtFirst = () => {
+      measure();
+      track.scrollLeft = firstOriginal.offsetLeft;
+    };
+    requestAnimationFrame(() => requestAnimationFrame(startAtFirst));
+    track.addEventListener('scroll', normalize, {passive:true});
+    window.addEventListener('resize', () => {
+      const current = track.scrollLeft;
+      measure();
+      // Keep the current visual position anchored to the real sequence after resize.
+      track.scrollLeft = firstOriginal.offsetLeft + ((current - firstOriginal.offsetLeft) % cycleWidth + cycleWidth) % cycleWidth;
     }, {passive:true});
 
     project.querySelectorAll('.partner-gallery-arrow').forEach(button => {
       button.addEventListener('click', () => {
         const direction = Number(button.dataset.galleryDir || 1);
-        const trackLeft = track.getBoundingClientRect().left;
-        let currentIndex = 0;
-        let smallest = Infinity;
-        originals.forEach((item, index) => {
-          const distance = Math.abs(item.getBoundingClientRect().left - trackLeft);
-          if (distance < smallest) { smallest = distance; currentIndex = index; }
-        });
-
-        if (direction > 0 && currentIndex === originals.length - 1) {
-          scrollToItem(firstClone);
-        } else if (direction < 0 && currentIndex === 0) {
-          scrollToItem(lastClone);
-        } else {
-          scrollToItem(originals[currentIndex + direction]);
-        }
+        const item = originals[0];
+        const gap = parseFloat(getComputedStyle(track).gap) || 0;
+        track.scrollBy({left: direction * (item.getBoundingClientRect().width + gap), behavior:'smooth'});
       });
     });
   });
