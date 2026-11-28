@@ -26,7 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// Partner galleries: seamless infinite loop in both directions, including touch/trackpad scrolling.
+// Partner galleries: genuinely circular scrolling in either direction.
+// Keep two duplicate cycles on each side, and only recenter after the visitor
+// has moved a full cycle beyond the central copy. The recenter is between
+// identical image sequences, so the visible gallery never jumps to the start.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.partner-project').forEach(project => {
     const track = project.querySelector('.partner-gallery-track');
@@ -34,74 +37,76 @@ document.addEventListener('DOMContentLoaded', () => {
     const originals = [...track.querySelectorAll('.partner-gallery-item')];
     if (originals.length < 2) return;
 
-    // Add a complete copy on either side so the user can enter the loop
-    // from the first image and continue in either direction immediately.
-    const makeClone = item => {
+    const cloneCycle = () => originals.map(item => {
       const clone = item.cloneNode(true);
       clone.dataset.galleryClone = 'true';
       clone.setAttribute('aria-hidden', 'true');
       clone.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(el => el.setAttribute('tabindex', '-1'));
-      clone.querySelectorAll('img').forEach(img => img.loading = 'eager');
+      clone.querySelectorAll('img').forEach(img => { img.loading = 'eager'; });
       return clone;
-    };
+    });
+
+    // Two full cycles before and after the real items provide ample runway.
     const before = document.createDocumentFragment();
-    originals.forEach(item => before.appendChild(makeClone(item)));
+    [...cloneCycle(), ...cloneCycle()].forEach(item => before.appendChild(item));
     track.insertBefore(before, originals[0]);
     const after = document.createDocumentFragment();
-    originals.forEach(item => after.appendChild(makeClone(item)));
+    [...cloneCycle(), ...cloneCycle()].forEach(item => after.appendChild(item));
     track.appendChild(after);
 
     let cycleWidth = 0;
-    let normalizing = false;
+    let centralStart = 0;
+    let adjusting = false;
     const measure = () => {
-      const firstOriginal = originals[0];
-      const firstAfter = track.querySelector('[data-gallery-clone="true"]:last-of-type');
-      // Use the original sequence's total width, including its inter-item gaps.
-      const firstBefore = track.querySelector('[data-gallery-clone="true"]');
-      const firstAfterClone = [...track.querySelectorAll('[data-gallery-clone="true"]')][originals.length];
-      if (firstOriginal && firstAfterClone) cycleWidth = firstAfterClone.offsetLeft - firstOriginal.offsetLeft;
-      if (!cycleWidth && originals.length) {
+      const first = originals[0];
+      const firstAfter = originals[0].nextElementSibling;
+      // The next item is the second original; use the first clone after the
+      // original run to measure one complete cycle including all gaps.
+      const cloneAfter = track.querySelectorAll('[data-gallery-clone="true"]')[originals.length * 2];
+      if (!first || !cloneAfter) return;
+      centralStart = first.offsetLeft;
+      cycleWidth = cloneAfter.offsetLeft - first.offsetLeft;
+      if (!cycleWidth && firstAfter) {
         const last = originals[originals.length - 1];
-        cycleWidth = last.offsetLeft + last.offsetWidth - firstOriginal.offsetLeft;
-        const style = getComputedStyle(track);
-        cycleWidth += parseFloat(style.columnGap || style.gap || 0) || 0;
+        cycleWidth = last.offsetLeft + last.offsetWidth - first.offsetLeft + (parseFloat(getComputedStyle(track).gap) || 0);
       }
-      if (firstBefore && firstAfter) { /* keep clone references measurable */ }
     };
-    const firstOriginal = originals[0];
-    const normalize = () => {
-      if (normalizing || !cycleWidth) return;
-      const originalStart = firstOriginal.offsetLeft;
-      const originalEnd = originalStart + cycleWidth;
-      if (track.scrollLeft < originalStart - 1) {
-        normalizing = true;
+
+    const recenter = () => {
+      if (adjusting || !cycleWidth) return;
+      const leftBoundary = centralStart - cycleWidth;
+      const rightBoundary = centralStart + cycleWidth;
+      if (track.scrollLeft < leftBoundary) {
+        adjusting = true;
         track.scrollLeft += cycleWidth;
-        normalizing = false;
-      } else if (track.scrollLeft >= originalEnd - 1) {
-        normalizing = true;
+        adjusting = false;
+      } else if (track.scrollLeft >= rightBoundary) {
+        adjusting = true;
         track.scrollLeft -= cycleWidth;
-        normalizing = false;
+        adjusting = false;
       }
     };
-    const startAtFirst = () => {
+
+    const initialize = () => {
       measure();
-      track.scrollLeft = firstOriginal.offsetLeft;
+      if (cycleWidth) track.scrollLeft = centralStart;
     };
-    requestAnimationFrame(() => requestAnimationFrame(startAtFirst));
-    track.addEventListener('scroll', normalize, {passive:true});
+    const ready = Promise.all(originals.flatMap(item => [...item.querySelectorAll('img')].map(img => img.decode?.().catch(() => {}) || Promise.resolve())));
+    ready.then(() => requestAnimationFrame(() => requestAnimationFrame(initialize)));
+    window.addEventListener('load', initialize, { once: true });
+    track.addEventListener('scroll', recenter, { passive: true });
     window.addEventListener('resize', () => {
-      const current = track.scrollLeft;
+      const relative = cycleWidth ? track.scrollLeft - centralStart : 0;
       measure();
-      // Keep the current visual position anchored to the real sequence after resize.
-      track.scrollLeft = firstOriginal.offsetLeft + ((current - firstOriginal.offsetLeft) % cycleWidth + cycleWidth) % cycleWidth;
-    }, {passive:true});
+      if (cycleWidth) track.scrollLeft = centralStart + Math.max(-cycleWidth * .9, Math.min(cycleWidth * .9, relative));
+    }, { passive: true });
 
     project.querySelectorAll('.partner-gallery-arrow').forEach(button => {
       button.addEventListener('click', () => {
         const direction = Number(button.dataset.galleryDir || 1);
         const item = originals[0];
         const gap = parseFloat(getComputedStyle(track).gap) || 0;
-        track.scrollBy({left: direction * (item.getBoundingClientRect().width + gap), behavior:'smooth'});
+        track.scrollBy({ left: direction * (item.getBoundingClientRect().width + gap), behavior: 'smooth' });
       });
     });
   });

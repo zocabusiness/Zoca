@@ -521,3 +521,8 @@ body.home .hero .image-band:after{content:none;background:none}
 @media(prefers-reduced-motion:no-preference){
   .partner-gallery-track{scroll-behavior:smooth;}
 }
+
+
+/* Circular gallery: smooth free-direction browsing with no snap-back. */
+.partner-gallery-track{scroll-snap-type:x proximity!important;overscroll-behavior-x:contain;}
+.partner-gallery-item{scroll-snap-align:start;}
