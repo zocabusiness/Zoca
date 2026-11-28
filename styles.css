@@ -536,3 +536,22 @@ body.home .hero .image-band:after{content:none;background:none}
 /* Circular gallery: no snap points; user-controlled native scrolling. */
 .partner-gallery-track{scroll-snap-type:none!important;scroll-behavior:auto!important;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
 .partner-gallery-item{scroll-snap-align:none!important;}
+
+
+/* Partner case-study pages */
+.partner-project-footer{display:flex;justify-content:flex-end;margin:14px 0 0;}
+.partner-explore-link{display:inline-flex;align-items:center;gap:9px;color:var(--ink);font-size:.86rem;letter-spacing:.035em;text-decoration:none;border-bottom:1px solid currentColor;padding:0 0 4px;transition:opacity .2s,gap .2s;}
+.partner-explore-link:hover{opacity:.65;gap:14px;}
+.partner-detail{padding:clamp(64px,9vw,118px) 0 90px;}
+.partner-detail-intro{max-width:760px;margin:0 0 clamp(34px,5vw,64px);}
+.partner-detail-back{display:inline-block;margin-bottom:28px;color:var(--muted);font-size:.85rem;text-decoration:none;}
+.partner-detail-back:hover{color:var(--ink);}
+.partner-detail .eyebrow{margin-bottom:12px;}
+.partner-detail h1{font-size:clamp(2.6rem,6vw,5rem);line-height:1.04;margin:0 0 24px;text-align:left;}
+.partner-detail-copy{max-width:680px;font-size:1rem;line-height:1.8;color:var(--muted);}
+.partner-detail-gallery{columns:2;column-gap:18px;}
+.partner-detail-photo{break-inside:avoid;margin:0 0 18px;}
+.partner-detail-photo img{display:block;width:100%;height:auto;border-radius:0;}
+.partner-detail-photo figcaption{font-size:.75rem;color:var(--muted);margin-top:7px;}
+@media(min-width:1000px){.partner-detail-gallery{columns:3;column-gap:22px}.partner-detail-photo{margin-bottom:22px;}}
+@media(max-width:600px){.partner-detail-gallery{columns:1}.partner-detail-photo{margin-bottom:14px}.partner-detail h1{font-size:clamp(2.4rem,11vw,3.6rem);}}
